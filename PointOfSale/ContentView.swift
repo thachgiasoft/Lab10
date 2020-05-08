@@ -12,7 +12,7 @@ struct ContentView : View {
     /* **************************************** */
     /* Globals (instance variables & constants) */
     @State
-    private var totalInput: Double? = 18.94
+    private var totalInput: Double? = 0.00
     
     @State
     private var selectedTipPercentage = 1
@@ -135,7 +135,7 @@ struct ContentView : View {
      * render tax selection "Picker" (dropdown, but with an iOS "wheel" styling)
      */
     private var spinnerTaxPercentages: some View {
-        Picker(selection: $selectedTaxPercentage, label: Text("")) {
+        Picker(selection: $selectedTaxPercentage, label: Text("Tax")) {
             ForEach(0..<self.provinces.count) { index in
                 Text(self.provinces[index] + " - " + self.formatPercent(self.taxPercentages[index])).tag(index)
             }
@@ -151,12 +151,14 @@ struct ContentView : View {
      */
     var body: some View {
         NavigationView {
-            VStack(spacing: 10) {
+            VStack(spacing: 1) {
                 Spacer()
 
                 TextField("Bill Amount", value: $totalInput, formatter: currencyFormatter)
-                    .font(.largeTitle)
+//                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .keyboardType(.numbersAndPunctuation)
                     .padding()
+                    .font(.largeTitle)
                     .background(Color.white)
                     .foregroundColor(Color.black)
                     .multilineTextAlignment(.center)
@@ -164,16 +166,11 @@ struct ContentView : View {
                 
                 Text("Tip percent")
                 segmentedTipPercentages
-                    .padding()
                     .accessibility(identifier: "provincialTaxRate")
                 
-                HStack() {
-                    Text("Tax: ")
-                        .padding()
-                    spinnerTaxPercentages
-                        .padding()
-                        .lineLimit(1)
-                }
+                spinnerTaxPercentages
+                    .lineLimit(1)
+                
                 Divider()
                 
                 summaryLine(a11yID: "tipAmount", label: "Tip:", amount: formattedTipAmount, color: .gray)
@@ -183,8 +180,10 @@ struct ContentView : View {
                 Spacer()
             }
             .background(Color(white: 0.85, opacity: 1.0))
-            .edgesIgnoringSafeArea(.all)
-            .navigationBarTitle(Text("Tip Calculator"))
+            .navigationBarTitle(
+                Text("Tip Calculator")
+            )
+            .edgesIgnoringSafeArea(.top)
         }
     }
     
